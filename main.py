@@ -1,6 +1,7 @@
 from fastapi import FastAPI 
 from database import database as connection
 from database import User, Movie, UserReview
+from schemas import UserBaseModel
 
 app = FastAPI(title='A little IMDB',
              description='With this project movies can be reviewed',
@@ -24,6 +25,10 @@ def shutdown():
 async def index():
     return 'hello world'
 
-@app.get('/about')
-async def about():
-    return 'about'
+@app.post('/users')
+async def create_user(user: UserBaseModel):
+    user = User.create(
+        username = user.username, 
+        password = user.password
+    )
+    return user.id
