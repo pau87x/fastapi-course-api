@@ -10,3 +10,7 @@ class UserBaseModel(BaseModel):
             raise ValueError('Longitud debe estar entre 3 y 50 caracteres')
 
         return username
+
+class UserResponseModel(BaseModel):
+    id: int
+    username: str
