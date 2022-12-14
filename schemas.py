@@ -1,6 +1,6 @@
 from pydantic import BaseModel, validator
 
-class UserBaseModel(BaseModel):
+class UserRequestModel(BaseModel):
     username: str 
     password: str
 
