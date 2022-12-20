@@ -85,6 +85,16 @@ async def create_review(user_review: ReviewRequestModel):
         )
     return user_review
 
+@app.delete('/reviews/{review_id}', response_model=ReviewResponseModel)
+async def delete_review(review_id: int):
+    user_review = UserReview.select().where(UserReview.id == review_id).first()
+
+    if user_review is None:
+        raise HTTPException(404, 'La review no fue encontrada')
+
+    user_review.delete_instance()
+    return user_review
+
 @app.post('/movies',response_model=MovieResponseModel)
 async def create_movie(movie: MovieRequestModel):
     movie = Movie.create(
