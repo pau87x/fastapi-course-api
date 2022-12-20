@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from database import database as connection
 from database import User, Movie, UserReview
 from schemas import UserRequestModel, UserResponseModel
-from schemas import ReviewRequestModel, ReviewResponseModel
+from schemas import ReviewRequestModel, ReviewResponseModel, ReviewRequestPutModel
 from schemas import MovieRequestModel, MovieResponseModel
 
 app = FastAPI(title='A little IMDB',
@@ -46,6 +46,28 @@ async def get_reviews():
     reviews = UserReview.select()
 
     return [user_review for user_review in reviews]
+
+@app.get('/reviews/{review_id}', response_model=ReviewResponseModel)
+async def get_review(review_id: int):
+    review = UserReview.select().where(UserReview.id == review_id).first()
+
+    if review is None:
+        raise HTTPException(404, 'La review no fue encontrada')
+
+    return review
+
+@app.put('/reviews/{review_id}', response_model=ReviewResponseModel)
+async def update_review(review_id: int, review_request: ReviewRequestPutModel):
+    user_review = UserReview.select().where(UserReview.id == review_id).first()
+
+    if user_review is None:
+        raise HTTPException(404, 'La review no fue encontrada')
+
+    user_review.review = review_request.review
+    user_review.score = review_request.score
+    user_review.save()
+
+    return user_review
 
 @app.post('/reviews',response_model=ReviewResponseModel)
 async def create_review(user_review: ReviewRequestModel):
