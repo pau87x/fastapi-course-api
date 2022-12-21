@@ -34,6 +34,13 @@ class UserResponseModel(ResponseModel):
     id: int
     username: str
 
+class MovieRequestModel(BaseModel):
+    title: str
+
+class MovieResponseModel(ResponseModel):
+    id: int
+    title: str 
+
 class ReviewValidator():
     @validator('score')
     def score_validator(cls, score):
@@ -53,14 +60,7 @@ class ReviewRequestPutModel(BaseModel, ReviewValidator):
     score: int
 
 class ReviewResponseModel(ResponseModel):
-    movie_id: int
+    id: int
+    movie: MovieResponseModel
     review: str
     score: int
-
-
-class MovieRequestModel(BaseModel):
-    title: str
-
-class MovieResponseModel(ResponseModel):
-    id: int
-    title: str 
