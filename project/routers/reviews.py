@@ -5,6 +5,22 @@ from ..schemas import ReviewRequestModel, ReviewResponseModel, ReviewRequestPutM
 
 router = APIRouter(prefix='/api/v1/reviews')
 
+@router.post('',response_model=ReviewResponseModel)
+async def create_review(user_review: ReviewRequestModel):
+    if User.select().where(User.id == user_review.user_id).first() is None:
+        raise HTTPException(404, 'El usuario no fue encontrado')
+
+    if Movie.select().where(Movie.id == user_review.movie_id).first() is None:
+        raise HTTPException(404, 'La pelicula no fue encontrada')
+
+    user_review = UserReview.create(
+        user_id = user_review.user_id,
+        movie_id = user_review.movie_id,
+        review = user_review.review,
+        score = user_review.score
+        )
+    return user_review
+
 @router.get('/reviews', response_model=List[ReviewResponseModel])
 async def get_reviews(page: int = 1, limit: int = 10):
     reviews = UserReview.select().paginate(page,limit)
@@ -31,22 +47,6 @@ async def update_review(review_id: int, review_request: ReviewRequestPutModel):
     user_review.score = review_request.score
     user_review.save()
 
-    return user_review
-
-@router.post('',response_model=ReviewResponseModel)
-async def create_review(user_review: ReviewRequestModel):
-    if User.select().where(User.id == user_review.user_id).first() is None:
-        raise HTTPException(404, 'El usuario no fue encontrado')
-
-    if Movie.select().where(Movie.id == user_review.movie_id).first() is None:
-        raise HTTPException(404, 'La pelicula no fue encontrada')
-
-    user_review = UserReview.create(
-        user_id = user_review.user_id,
-        movie_id = user_review.movie_id,
-        review = user_review.review,
-        score = user_review.score
-        )
     return user_review
 
 @router.delete('/{review_id}', response_model=ReviewResponseModel)

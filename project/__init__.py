@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from .database import database as connection
 from .database import User, Movie, UserReview
 
