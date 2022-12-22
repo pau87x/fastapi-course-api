@@ -1,14 +1,18 @@
 from typing import List
 from fastapi import FastAPI, HTTPException
-from database import database as connection
-from database import User, Movie, UserReview
-from schemas import UserRequestModel, UserResponseModel
-from schemas import ReviewRequestModel, ReviewResponseModel, ReviewRequestPutModel
-from schemas import MovieRequestModel, MovieResponseModel
+from .database import database as connection
+from .database import User, Movie, UserReview
+from .schemas import UserRequestModel, UserResponseModel
+from .schemas import ReviewRequestModel, ReviewResponseModel, ReviewRequestPutModel
+from .schemas import MovieRequestModel, MovieResponseModel
+
+from .routers import user_router
 
 app = FastAPI(title='A little IMDB',
              description='With this project movies can be reviewed',
              version='1.0')
+
+app.include_router(user_router)
 
 @app.on_event('startup')
 def startup():
@@ -24,18 +28,7 @@ def shutdown():
         connection.close
         print('Shutdown server... closing connection')
 
-@app.post('/users',response_model=UserResponseModel)
-async def create_user(user: UserRequestModel):
-    if User.select().where(User.username == user.username).exists():
-        return HTTPException(409, 'El username se encuentra en uso')
-    hash_password = User.create_password(user.password)
 
-    user = User.create(
-        username = user.username, 
-        password = hash_password
-    )
-
-    return user
 
 @app.get('/reviews', response_model=List[ReviewResponseModel])
 async def get_reviews(page: int = 1, limit: int = 10):
