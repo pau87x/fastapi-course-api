@@ -1,6 +1,6 @@
 import requests
 
-URL = 'http://localhost:8000/api/v1/reviews'
+URL = 'http://localhost:8000/api/v1/reviews?page=1&limit=2'
 HEADERS = { 'accept': 'application/json' }
 
 response = requests.get(URL, headers=HEADERS)
