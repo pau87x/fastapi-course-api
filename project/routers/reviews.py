@@ -3,7 +3,7 @@ from fastapi import HTTPException, APIRouter
 from ..database import UserReview, User, Movie
 from ..schemas import ReviewRequestModel, ReviewResponseModel, ReviewRequestPutModel
 
-router = APIRouter(prefix='/api/v1/reviews')
+router = APIRouter(prefix='/reviews')
 
 @router.post('',response_model=ReviewResponseModel)
 async def create_review(user_review: ReviewRequestModel):

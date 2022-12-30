@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from .database import database as connection
 from .database import User, Movie, UserReview
 
@@ -11,9 +11,13 @@ app = FastAPI(title='A little IMDB',
              description='With this project movies can be reviewed',
              version='1.0')
 
-app.include_router(user_router)
-app.include_router(review_router)
-app.include_router(movie_router)
+api_v1 = APIRouter(prefix='/api/v1')
+
+api_v1.include_router(user_router)
+api_v1.include_router(review_router)
+api_v1.include_router(movie_router)
+
+app.include_router(api_v1)
 
 @app.on_event('startup')
 def startup():
