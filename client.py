@@ -1,6 +1,6 @@
 import requests
 
-URL = 'http://localhost:8000/api/v1/users/reviews'
+URL = 'http://localhost:8000/api/v1/reviews'
 HEADERS = { 'accept': 'application/json' }
 
 response = requests.get(URL, headers=HEADERS)
@@ -8,7 +8,8 @@ response = requests.get(URL, headers=HEADERS)
 if response.status_code == 200:
     print('Peticion exitosa')
 
-    print(response.content)
-    print('\n')
+    if response.headers.get('content-type') == 'application/json':
+        reviews = response.json()
 
-    print(response.headers)
+        for review in reviews:
+            print(f"score: {review['score']} - {review['review']}" )
