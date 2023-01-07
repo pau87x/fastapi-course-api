@@ -1,20 +1,22 @@
 from typing import List
-from fastapi import HTTPException, APIRouter
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from ..common import get_current_user
+
 from ..database import UserReview, User, Movie
 from ..schemas import ReviewRequestModel, ReviewResponseModel, ReviewRequestPutModel
 
 router = APIRouter(prefix='/reviews')
 
 @router.post('',response_model=ReviewResponseModel)
-async def create_review(user_review: ReviewRequestModel):
-    if User.select().where(User.id == user_review.user_id).first() is None:
-        raise HTTPException(404, 'El usuario no fue encontrado')
+async def create_review(user_review: ReviewRequestModel, user: User = Depends(get_current_user)):
 
     if Movie.select().where(Movie.id == user_review.movie_id).first() is None:
         raise HTTPException(404, 'La pelicula no fue encontrada')
 
     user_review = UserReview.create(
-        user_id = user_review.user_id,
+        user_id = user.id,
         movie_id = user_review.movie_id,
         review = user_review.review,
         score = user_review.score
