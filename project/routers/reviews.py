@@ -55,11 +55,14 @@ async def update_review(review_id: int, review_request: ReviewRequestPutModel, u
     return user_review
 
 @router.delete('/{review_id}', response_model=ReviewResponseModel)
-async def delete_review(review_id: int):
+async def delete_review(review_id: int, user: User = Depends(get_current_user)):
     user_review = UserReview.select().where(UserReview.id == review_id).first()
 
     if user_review is None:
         raise HTTPException(404, 'La review no fue encontrada')
+
+    if user_review.user_id != user.id:
+        raise HTTPException(401, 'Usuario no autorizado')
 
     user_review.delete_instance()
     return user_review
