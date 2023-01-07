@@ -1,5 +1,6 @@
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 
-from fastapi import FastAPI, APIRouter
 from .database import database as connection
 from .database import User, Movie, UserReview
 
@@ -16,6 +17,21 @@ api_v1 = APIRouter(prefix='/api/v1')
 api_v1.include_router(user_router)
 api_v1.include_router(review_router)
 api_v1.include_router(movie_router)
+
+@api_v1.post('/auth')
+async def auth(data: OAuth2PasswordRequestForm = Depends()):
+    user = User.authenticate(data.username, data.password)
+    if user:
+        return {
+            'username': data.username,
+            'password': data.password
+        }
+    else:
+        raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail='Usuario o password incorrectos',
+                headers={'www-Autenticate': 'Beraer' }
+            )
 
 app.include_router(api_v1)
 
