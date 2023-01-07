@@ -21,13 +21,13 @@ async def create_review(user_review: ReviewRequestModel):
         )
     return user_review
 
-@router.get('/reviews', response_model=List[ReviewResponseModel])
+@router.get('', response_model=List[ReviewResponseModel])
 async def get_reviews(page: int = 1, limit: int = 10):
     reviews = UserReview.select().paginate(page,limit)
 
     return [user_review for user_review in reviews]
 
-@router.get('/reviews/{review_id}', response_model=ReviewResponseModel)
+@router.get('/{review_id}', response_model=ReviewResponseModel)
 async def get_review(review_id: int):
     review = UserReview.select().where(UserReview.id == review_id).first()
 
